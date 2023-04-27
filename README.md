@@ -1,4 +1,5 @@
-# head2head - a chatbot for quizzing
+# head2head - a quiz chatbot for studying
+
 
 
 <!--- 
