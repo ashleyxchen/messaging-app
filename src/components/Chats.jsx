@@ -1,32 +1,104 @@
-import React from 'react'
+import { AuthContext } from "../context/AuthContext";
+import { ChatContext } from "../context/ChatContext";import React from 'react'
+import { useState, useEffect, useContext } from 'react'
+import { doc, onSnapshot } from "firebase/firestore";
+import { db } from "../firebase";
+
 
 const Chats = () => {
-  return (
-    <div className='search'>
-        <div className="userChat">
-            <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-photo%2F3d-render-male-avatar-with-blue-sweater-good-profile-picture_25099214.htm&psig=AOvVaw0G-enfDzGPRi_McwqzYawl&ust=1682695288926000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCIi-1smuyv4CFQAAAAAdAAAAABAE" alt=""/>
-            <div className="userChatInfo">
-                <span>Jane</span>
-                <p>blahblah</p>
-            </div>
-        </div>
-        <div className="userChat">
-            <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-photo%2F3d-render-male-avatar-with-blue-sweater-good-profile-picture_25099214.htm&psig=AOvVaw0G-enfDzGPRi_McwqzYawl&ust=1682695288926000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCIi-1smuyv4CFQAAAAAdAAAAABAE" alt=""/>
-            <div className="userChatInfo">
-                <span>Jane</span>
-                <p>blahblah</p>
-            </div>
-        </div>
-        <div className="userChat">
-            <img src="https://www.google.com/url?sa=i&url=https%3A%2F%2Fwww.freepik.com%2Fpremium-photo%2F3d-render-male-avatar-with-blue-sweater-good-profile-picture_25099214.htm&psig=AOvVaw0G-enfDzGPRi_McwqzYawl&ust=1682695288926000&source=images&cd=vfe&ved=0CBEQjRxqFwoTCIi-1smuyv4CFQAAAAAdAAAAABAE" alt=""/>
-            <div className="userChatInfo">
-                <span>Jane</span>
-                <p>blahblah</p>
-            </div>
-        </div>
-    </div>
+    const {currentUser} = useContext(AuthContext)
+    const [chats, setChats] = useState([])
+    const { dispatch } = useContext(ChatContext)
 
+    useEffect(() => {
+        const getChats = () => {
+          const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+            setChats(doc.data());
+          });
+    
+          return () => {
+            unsub();
+          };
+        };
+    
+        currentUser.uid && getChats();
+      }, [currentUser.uid]);
+    const handleSelect = (u) => {
+        dispatch({type:"CHANGE_USER", payload: u})
+    }
+
+  return (
+    <div className="chats">
+        {/* sort chat with most recent */}
+        {Object.entries(chats)?.sort((a,b)=>b[1].date - a[1].date).map((chat) => (
+        <div
+          className="userChat"
+          key={chat[0]}
+          onClick={() => handleSelect(chat[1].userInfo)}
+        >
+          <img src={chat[1].userInfo.photoURL} alt="" />
+          <div className="userChatInfo">
+            <span>{chat[1].userInfo.displayName}</span>
+            <p>{chat[1].lastMessage?.text}</p>
+          </div>
+        </div>
+      ))}
+    </div>
   )
 }
 
 export default Chats
+
+// --------------------------------------------------
+
+
+// import { doc, onSnapshot } from "firebase/firestore";
+// import React, { useContext, useEffect, useState } from "react";
+// import { AuthContext } from "../context/AuthContext";
+// import { ChatContext } from "../context/ChatContext";
+// import { db } from "../firebase";
+
+// const Chats = () => {
+//   const [chats, setChats] = useState([]);
+
+//   const { currentUser } = useContext(AuthContext);
+//   const { dispatch } = useContext(ChatContext);
+
+//   useEffect(() => {
+//     const getChats = () => {
+//       const unsub = onSnapshot(doc(db, "userChats", currentUser.uid), (doc) => {
+//         setChats(doc.data());
+//       });
+
+//       return () => {
+//         unsub();
+//       };
+//     };
+
+//     currentUser.uid && getChats();
+//   }, [currentUser.uid]);
+
+//   const handleSelect = (u) => {
+//     dispatch({ type: "CHANGE_USER", payload: u });
+//   };
+
+//   return (
+//     <div className="chats">
+//       {Object.entries(chats)?.sort((a,b)=>b[1].date - a[1].date).map((chat) => (
+//         <div
+//           className="userChat"
+//           key={chat[0]}
+//           onClick={() => handleSelect(chat[1].userInfo)}
+//         >
+//           <img src={chat[1].userInfo.photoURL} alt="" />
+//           <div className="userChatInfo">
+//             <span>{chat[1].userInfo.displayName}</span>
+//             <p>{chat[1].lastMessage?.text}</p>
+//           </div>
+//         </div>
+//       ))}
+//     </div>
+//   );
+// };
+
+// export default Chats;
