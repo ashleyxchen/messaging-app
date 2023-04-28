@@ -1,4 +1,8 @@
-# chatbot
+# head2head - a quiz chatbot for studying
+
+
+
+<!--- 
 
 Chat bot for learning
 1. Give it a spreadsheet with questions and answers.
@@ -7,9 +11,14 @@ Chat bot for learning
 4. after submitting answer to chatbot, the chatbot will spit back out report on which ones you got correct, almost correct, and wrong, as well as the keywords for each answer. 
 5. Option to rerun test. 
 
-
 Tech:
-Using lex
+React
+Firebase
 Use text analysis:  
   https://monkeylearn.com/text-analysis/
   https://monkeylearn.com/keyword-extraction/
+--->
+
+
+
+
