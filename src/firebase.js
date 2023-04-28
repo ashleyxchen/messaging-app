@@ -8,14 +8,7 @@ import { getFirestore } from "firebase/firestore";
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-    apiKey: "AIzaSyAl-WYSw5qFFJYIGyE2yWZfTPAw4Ahs79E",
-    authDomain: "chatbot2-74e55.firebaseapp.com",
-    projectId: "chatbot2-74e55",
-    storageBucket: "chatbot2-74e55.appspot.com",
-    messagingSenderId: "764873195588",
-    appId: "1:764873195588:web:fb46c0922188f16cddfc11",
-};
+const firebaseConfig = {};
 
 // Initialize Firebase
 export const app = initializeApp(firebaseConfig);
