@@ -1,5 +1,4 @@
 import React from 'react'
-import Img from "../img/img.png";
 import Attach from "../img/attach.png";
 import { useState, useContext } from 'react';
 import { AuthContext } from '../context/AuthContext';
@@ -14,26 +13,24 @@ import {
 } from "firebase/firestore";
 import { db, storage } from "../firebase";
 import { v4 as uuid } from "uuid";
-
-
+// import {Textarea, Button, useToast } from "@chakra-ui/react";
 
 const Input = () => {
 
   const [text, setText] = useState("")
-  const [img, setImg] = useState(null)
+  const [file, setFile] = useState(null)
 
   const { currentUser } = useContext(AuthContext)
   const { data } = useContext(ChatContext)
 
   const handleSend = async () => {
-    if (img) { // send text & img
+    if (file) { // send text & file
 
       const storageRef = ref(storage, uuid);
-      const uploadTask = uploadBytesResumable(storageRef, img)
+      const uploadTask = uploadBytesResumable(storageRef, file)
 
       uploadTask.on(
         (error) => {
-          // setErr(true)
         }, 
         () => {
           getDownloadURL(storageRef).then(async (downloadURL) => {
@@ -43,7 +40,7 @@ const Input = () => {
                 text,
                 senderId: currentUser.uid,
                 date: Timestamp.now(),
-                img: downloadURL,
+                file: downloadURL,
               }),
             });
           });
@@ -61,7 +58,7 @@ const Input = () => {
       });
     }
     
-    // save to currUser
+    // save to current user
     await updateDoc(doc(db, "userChats", currentUser.uid), {
       [data.chatId + ".lastMessage"]: {
         text,
@@ -77,33 +74,34 @@ const Input = () => {
       [data.chatId + ".date"]: serverTimestamp(),
     });
 
-    setText("")
-    setImg(null)
+    setText("");
+    setFile(null);
   };
 
   return (
     <div className="input">
-    <input
-      type="text"
-      placeholder="Type something..."
-      onChange={(e) => setText(e.target.value)}
-      value={text}
-    />
-    <div className="send">
-      <img src={Attach} alt="" />
+      {/* textarea?? */}
       <input
-        type="file"
-        style={{ display: "none" }}
-        id="file"
-        onChange={(e) => setImg(e.target.files[0])}
+        type="text"
+        placeholder="Type something..."
+        onChange={(e) => setText(e.target.value)}
+        value={text}
       />
-      <label htmlFor="file">
-        <img src={Img} alt="" />
-      </label>
-      <button onClick={handleSend}>Send</button>
+      <div className="send">
+        <input
+          type="file"
+          style={{ display: "none" }}
+          id="file"
+          onChange={(e) => setFile(e.target.files[0])}
+        />
+        <label htmlFor="file">
+          <img src={Attach} alt="" />
+        </label>
+        <button onClick={handleSend}>Send</button>
+      </div>
     </div>
-  </div>
   )
 }
 
-export default Input
+export default Input;
+

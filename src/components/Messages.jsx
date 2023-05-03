@@ -28,4 +28,4 @@ const Messages = ({message}) => {
   );
 };
 
-export default Messages
+export default Messages;
